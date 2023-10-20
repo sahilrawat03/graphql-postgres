@@ -1,7 +1,6 @@
 const { gql } = require('apollo-server-express');
 const pool=require('../database/db')
 
- const { authenticateUser } = require('../middleware/middleware');
 
 exports.typeDefs = gql`
 type Blog {
@@ -9,9 +8,9 @@ type Blog {
   title: String
   content: String
   tags:[String]
-  user_id:Int
   knowledgerating: Int
   overallrating: Int
+  user_id:Int
   contentrating:Int
   usercomments:[String]
 }
@@ -22,8 +21,10 @@ type Query {
 }
 
 type Mutation {
-  createBlog( title: String  content: String  points:Int tags:[String] user_id:Int): Blog
-  updateBlog(id:Int,title: String  content: String  points:Int tags:[String] user_id:Int):Blog
+  createBlog( title: String  content: String  points:Int tags:[String] ): Blog
+  updateBlog(id:Int,title: String  content: String  points:Int tags:[String] ):Blog
+  deleteBlog(id:Int,title: String  content: String  points:Int tags:[String]   ):Blog
+
 }
 `;
 
@@ -59,10 +60,10 @@ exports.resolvers = {
         },
     },
     Mutation: {
-      createBlog: async (_, {title,content,tags,user_id}) => {
-          console.log("request")
+      createBlog: async (_, { title, content, tags }, context) => {
+        const { user } = context;
         //   const query1 = `SELECT * FROM blogs WHERE email=$1`;
-          const values=[title,content,tags,user_id];
+          const values=[title,content,tags,user.id];
           console.log(values)
         //   const result = await pool.query(query1,values1);
         //   console.log(result)
@@ -71,13 +72,16 @@ exports.resolvers = {
         const { rows } = await pool.query(query, values);
         return rows[0];
         },
-        updateBlog: async (_, {id,title,content,tags,user_id}) => {
+      updateBlog: async (_, { id, title, content, tags, user_id }, context) => {
+        const { user } = context;
+
+
+            console.log(id,title,user,'..........')
            //   const query1 = `SELECT * FROM blogs WHERE email=$1`;
            console.log(tags)
            //   const result = await pool.query(query1,values1);
-           //   console.log(result)
            //   if(result.rows.length !=0)     throw new GraphQLError('User already exists.');
-           const values=[id,title,content,tags,user_id]; 
+           const values=[id,title,content,tags,user.id]; 
             const q1 = `Update blogs set title='${title}',content =' ${content}',tags=['${tags}'],user_id= '${user_id}' where id= '${id}' `;
             const query = `
             UPDATE blogs

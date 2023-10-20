@@ -29,6 +29,21 @@ userController.createUser = async(request, response) => {
     }
 };
 
+
+userController.verifyUser = async(request, response) => {
+    try {
+        console.log(request.body)
+      const { username,password } = request.body;
+        const { rows } = await pool.query(`SELECT * from users where username=$1 AND password =$2 LIMIT 1`,[username,password]);
+        console.log(rows)
+      let token = jwt.sign({ id: rows[0].id }, secret, { expiresIn: "3h" });
+
+        response.status(201).json({token});
+    } catch (error) {
+      console.error(error.message); 
+      response.status(500).json({ error: 'Internal Server Error' });
+    }
+};
 userController.updateUser = async(request, response) => {
     try {
         console.log(request.body);

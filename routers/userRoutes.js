@@ -21,7 +21,9 @@ const router = express.Router();
 // router.route("/createTutorial").post(userController.createTutorial);
 // router.route("/updateTutorial").put(userController.updateTutorial);
 // router.route("/deleteTutorial").delete(userController.deleteTutorial);
-router.post('/user',userController.createUser);
+router.post('/user', userController.createUser);
+router.post('/verify',userController.verifyUser);
+
 router.put('/user', userController.updateUser);
 // router.put('/user',userController.updateUser);
 
