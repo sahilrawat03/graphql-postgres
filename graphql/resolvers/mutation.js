@@ -4,9 +4,8 @@ const { ApolloError } = require('apollo-server-express');
 
 
 const createBlog = async (title, content, tags, user_id)=> {
-0    //   const query1 = `SELECT * FROM blogs WHERE email=$1`;
+  //   const query1 = `SELECT * FROM blogs WHERE email=$1`;
       const values=[title,content,tags,user_id];
-      console.log(values)
     //   const result = await pool.query(query1,values1);
     //   if(result.rows.length !=0)     throw new GraphQLError('User already exists.');
     const query = 'INSERT INTO blogs(title, content,tags,user_id) VALUES($1, $2,$3,$4) RETURNING *';
@@ -27,7 +26,6 @@ const updateBlog = async(id,title, content, tags, user_id) =>{
       `;
         // const result = await pool.query(query, values);
     let result = await pool.query(query, values);
-    console.log(result.rows.length,'----')
     if (result.rows.length == 0) {
         const error = new ApolloError('Blog not created', 'BAD_REQUEST');
             error.extensions = { code: 'BAD_REQUEST',statusCode:400 };
@@ -44,7 +42,6 @@ const deleteBlog = async (id) => {
   `;
     // const result = await pool.query(query, values);
     let result = await pool.query(query, values)
-    console.log(result.rows[0]);
 
   return result.rows[0];
 
@@ -53,7 +50,6 @@ const deleteBlog = async (id) => {
 const giveRating = async ( contentrating, knowledgerating, overallrating,blog_id,user_id )=> {
         //   const query1 = `SELECT * FROM blogs WHERE email=$1`;
           const values=[contentrating, knowledgerating, overallrating,blog_id,user_id ];
-          console.log(values)
         //   const result = await pool.query(query1,values1);
         //   if(result.rows.length !=0)     throw new GraphQLError('User already exists.');
         const query = 'INSERT INTO ratings(contentrating, knowledgerating, overallrating,blog_id,user_id ) VALUES($1, $2,$3,$4, $5) RETURNING *';
@@ -74,7 +70,6 @@ const updateRating = async(contentrating, knowledgerating, overallrating,blog_id
    `;
      // const result = await pool.query(query, values);
  let result = await pool.query(query, values);
- console.log(result.rows.length,'----')
  if (result.rows.length == 0) {
      const error = new ApolloError('Blog not created', 'BAD_REQUEST');
          error.extensions = { code: 'BAD_REQUEST',statusCode:400 };

@@ -1,7 +1,6 @@
 const  pool  = require('../../database/db');
 
 const getBlogById = async (id) => {
-    console.log(id)
     // authenticateUser(reques)
     const query = `
 SELECT * 

@@ -54,7 +54,6 @@ exports.resolvers = {
            LEFT JOIN comments ON blogs.id = comments.blog_id
         `;
             const { rows } = await pool.query(query);
-            console.log(rows)
             return rows; 
 
         },
@@ -64,7 +63,6 @@ exports.resolvers = {
         const { user } = context;
         //   const query1 = `SELECT * FROM blogs WHERE email=$1`;
           const values=[title,content,tags,user.id];
-          console.log(values)
         //   const result = await pool.query(query1,values1);
         //   console.log(result)
         //   if(result.rows.length !=0)     throw new GraphQLError('User already exists.');
@@ -76,9 +74,7 @@ exports.resolvers = {
         const { user } = context;
 
 
-            console.log(id,title,user,'..........')
            //   const query1 = `SELECT * FROM blogs WHERE email=$1`;
-           console.log(tags)
            //   const result = await pool.query(query1,values1);
            //   if(result.rows.length !=0)     throw new GraphQLError('User already exists.');
            const values=[id,title,content,tags,user.id]; 
@@ -90,13 +86,11 @@ exports.resolvers = {
           `;
             // const result = await pool.query(query, values);
             let result = await pool.query(query, values)
-            console.log(result.rows[0]);
 
           return result.rows[0];
         },
         deleteBlog: async (_, {id}) => {
             //   const query1 = `SELECT * FROM blogs WHERE email=$1`;
-            console.log(tags)
             //   const result = await pool.query(query1,values1);
             //   console.log(result)
             //   if(result.rows.length !=0)     throw new GraphQLError('User already exists.');
@@ -106,7 +100,6 @@ exports.resolvers = {
            `;
              // const result = await pool.query(query, values);
              let result = await pool.query(query, values)
-             console.log(result.rows[0]);
  
            return result.rows[0];
          },

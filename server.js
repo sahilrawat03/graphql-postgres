@@ -1,5 +1,6 @@
 const express = require('express');
 const { applyMiddleware } = require("graphql-middleware");
+const { AuthenticationError } = require('apollo-server-express');
 
 const { ApolloServer, gql } = require('apollo-server-express');
 
@@ -24,6 +25,9 @@ const server = new ApolloServer({
   resolvers,
   context: ({ req, res }) => {
     const user = middleware.authenticateUser(req, res);
+    if (!user) {
+      throw new AuthenticationError('Invalid token. Authentication failed.');
+    }
     return {user};
   },
    
@@ -37,7 +41,7 @@ async function startApolloServer() {
 // server.applyMiddleware({ app, path: '/graphql' });
 
 startApolloServer().then(() => {
-  app.listen(4000, () => {
-    console.log('Server is running on port 4000');
+  app.listen(4400, () => {
+    console.log('Server is running on port 4400');
   });
 });

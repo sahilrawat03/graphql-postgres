@@ -3,7 +3,6 @@ const secret = process.env.SECRET|| '12345678';
 
 const middleware={}
 middleware.authenticateUser = (req, res) => {
-    //  console.log(req.headers.authorization,'==========')
     try {
         
         let tokenData = jwt.verify(req.headers.authorization, secret);
@@ -11,8 +10,7 @@ middleware.authenticateUser = (req, res) => {
    
     }
     catch(err) {
-        console.log(err.message,'=============================')
-        res.send(err.message);
+        return ;
     }
 };
 

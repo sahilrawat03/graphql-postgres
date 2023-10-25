@@ -17,10 +17,9 @@ let userPassword = (tokenid) => data.find((i) => i.password == tokenid);
 
 userController.createUser = async(request, response) => {
     try {
-        console.log(request.body)
       const { name,username, email,password,contactNo } = request.body;
       const { rows } = await pool.query('INSERT INTO users(name,username, email,password,contactNo) VALUES($1, $2, $3, $4, $5) RETURNING *', [name,username, email,password,contactNo]);
-      let token = jwt.sign({ id: rows[0].id }, secret, { expiresIn: "3h" });
+      let token = jwt.sign({ id: rows[0].id, role:rows[0].role }, secret, { expiresIn: "3h" });
 
         response.status(201).json({token});
     } catch (error) {
@@ -32,10 +31,8 @@ userController.createUser = async(request, response) => {
 
 userController.verifyUser = async(request, response) => {
     try {
-        console.log(request.body)
       const { username,password } = request.body;
         const { rows } = await pool.query(`SELECT * from users where username=$1 AND password =$2 LIMIT 1`,[username,password]);
-        console.log(rows)
       let token = jwt.sign({ id: rows[0].id }, secret, { expiresIn: "3h" });
 
         response.status(201).json({token});
@@ -46,7 +43,6 @@ userController.verifyUser = async(request, response) => {
 };
 userController.updateUser = async(request, response) => {
     try {
-        console.log(request.body);
         function generateUpdateClause(request) {
             const updates = Object.keys(request).filter(key => key !== 'id').map(key => {
                 return `${key} = '${request[key]}'`;
@@ -59,7 +55,6 @@ userController.updateUser = async(request, response) => {
         // const { name, username, email, password, contactNo } = request.body;/
         let query = `Update Users set ${updateClause} where id=${request.body.id}`;
 
-        console.log(query)
       const { rows } = await pool.query(query );
         response.status(201).json({message:"data updated successfully",data: rows[0]});
     } catch (error) {
@@ -70,7 +65,6 @@ userController.updateUser = async(request, response) => {
 
 
 userController.updateTutorial = (request, response) => {
-    console.log(request.body);
  
     // const keys = Object.keys(request.body); // Get the keys from req.body
     // const values = Object.values(request.body);
@@ -82,13 +76,11 @@ userController.updateTutorial = (request, response) => {
          bind.push(request.body.id);
         count++;
     }
-    console.log(bind.indexOf(request.body.id),'1');
      if (request.body.title || request.body.description || request.body.published) {
          for (let key in request.body) {
              if (key=='id') {
                  continue;
              }
-              console.log(key);
              query += `${key}=$${count}, `;
              bind.push(request.body[key]);
 
@@ -104,7 +96,6 @@ userController.updateTutorial = (request, response) => {
     if (request.body.id) {
         query += " WHERE id = $1";
     }
-    console.log(query,'->',bind,'----------');
     pool.query(query, bind, (err, result) => {
         if (err) {
             throw err;
@@ -115,7 +106,6 @@ userController.updateTutorial = (request, response) => {
 };
 
 userController.getTutorials =  (request, response) => {
-    // console.log(request.body.id);
     let query = "SELECT * FROM tutorials";
 
     if (request.body.id) {
@@ -134,7 +124,6 @@ const randomNumber =async () => {
     let randomThreeDigitNumber;
     while (unique) {   
         randomThreeDigitNumber = Math.floor(Math.random() * 9000) + 1000;
-        console.log(randomThreeDigitNumber);
         let ans = await pool.query("select title from tutorials where id=$1", [randomThreeDigitNumber],
         );
         if (ans.rowCount==0) {
@@ -176,12 +165,10 @@ userController.signUp = (req, res) => {
     } else {
         //assigning index to new user
         req.body.id = newIndex();
-        console.log(req.body.id);
         data.push(req.body);
         let token = jwt.sign({ id: req.body.id }, secret, { expiresIn: "3h" });
         let obj = new Object;
         obj.token = token;
-        console.log(obj);
         tokenPush(obj);
         fsPush(data);
      
@@ -198,17 +185,14 @@ const signIn = (req, res) => {
         res.status(400).send(" signup first");
     } else {
         if (checkEmail.id != checkPassword.id) {
-            console.log("invalid");
             res.status(404).send("invalid");
         }
 
         else {
 
             let token = jwt.sign({ id: checkEmail.id }, secret, { expiresIn: "3h" });
-            console.log(" ok");
             let obj = new Object;
             obj.token = token;
-            console.log(obj);
             tokenPush(obj);
             res.status(200).send(JSON.stringify({ token }));
         }
