@@ -12,7 +12,7 @@ middleware.authenticateUser = (req, res) => {
     }
     catch(err) {
         console.log(err.message,'=============================')
-        res.send(tokenError);
+        res.send(err.message);
     }
 };
 
